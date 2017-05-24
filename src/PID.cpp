@@ -13,9 +13,22 @@ PID::~PID() {}
 
 
 void PID::UpdateError(double cte) {
-  d_error = cte - p_error;
+  
+  // Initialize last measure (only required during first call of update error)
+  if(!t_last_meas){
+    t_last_meas = std::chrone::steady_clock::now();
+    }
+
+  // Calculate interval since last measurement
+  auto t_curr = std::chrone::steady_clock::now();
+  std::chrono::duration<double> interval = t_curr - t_last_meas;
+  double dt_interval = interval.count();
+  t_last_meas = t_curr;
+
+  // Update errors
+  d_error = (cte - p_error) * dt_interval;
   p_error = cte;
-  i_error += cte; 
+  i_error += cte * dt_interval; 
 }
 
 double PID::TotalError() {

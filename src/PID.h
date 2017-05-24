@@ -2,6 +2,8 @@
 #define PID_H
 
 class PID {
+  std::chrone::steady_clock::time_point t_last_meas;
+
 public:
   /*
   * Errors
