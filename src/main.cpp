@@ -2,7 +2,9 @@
 #include <iostream>
 #include "json.hpp"
 #include "PID.h"
+#include "helper.h"
 #include <math.h>
+
 
 // for convenience
 using json = nlohmann::json;
@@ -33,9 +35,9 @@ int main()
   uWS::Hub h;
 
 
-  double Kp_init = 0.0;
-  double Ki_init = 0.0;
-  double Kd_init = 0.0;
+  double Kp_init = 0.1;
+  double Ki_init = 0.001;
+  double Kd_init = 2.0;
   int twiddle_threshold = 100;
   PID pid = PID(Kp_init,Ki_init,Kd_init, twiddle_threshold);
   // TODO: Initialize the pid variable.
@@ -66,6 +68,7 @@ int main()
           
 
           steer_value = pid.TotalError(); 
+          steer_value = Sigmoid(steer_value);
 
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
