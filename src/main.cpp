@@ -35,13 +35,13 @@ int main()
 
   PID pid;
 
-  PID.Init(Kp_init,Ki_init,Kd_init, twiddle_threshold);
-
   // TODO: Initialize the pid variable.
   double Kp_init = 0.1;
   double Ki_init = 0.001;
   double Kd_init = 2.0;
-  int twiddle_threshold = 200100;
+  int twiddle_threshold = 50;
+  double twiddle_tolerance = 0.0001;
+  pid.Init(Kp_init,Ki_init,Kd_init, twiddle_threshold, twiddle_tolerance);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -69,6 +69,7 @@ int main()
           
 
           steer_value = pid.TotalError(); 
+          steer_value = pid.Sigmoid(steer_value, -1.0, 1.0);
 
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
