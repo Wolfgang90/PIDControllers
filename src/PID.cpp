@@ -1,4 +1,5 @@
 #include "PID.h"
+#include "helper.h"
 
 using namespace std;
 
@@ -6,11 +7,33 @@ using namespace std;
 * TODO: Complete the PID class.
 */
 
-PID::PID(double Kp, double Ki, double Kd, int twiddle_threshold): Kp(Kp), Ki(Ki), Kd(Kd), twiddle_threshold(twiddle_threshold), p_error(0), i_error(0), d_error(0),t_last_meas(std::chrono::steady_clock::now()){
-}
+PID::PID() {}
 
 PID::~PID() {}
 
+void PID::Init(double Kp, double Ki, double Kd, int twiddle_threshold, double twiddle_tolerance){
+
+  // Parameters
+  this->Kp = Kp;
+  this->Ki = Ki;
+  this->Kd = Kd;
+
+  // Errors
+  p_error = 0;
+  i_error = 0;
+  d_error = 0;
+
+  // Number of epochs after which twiddle optimization should be applied
+  this->twiddle_threshold = twiddle_threshold;
+
+  // Twiddle tolerance value for accumulated dp-values
+  this->twiddle_tolerance = twiddle_tolerance;
+
+
+  iteration_counter = 0;
+
+  t_last_meas = std::chrono::steady_clock::now();
+}
 
 void PID::UpdateError(double cte) {
   
@@ -27,32 +50,35 @@ void PID::UpdateError(double cte) {
 
   iteration_counter += 1;
 
-  ApplyTwiddle(0.2);
+  if(iteration_counter < twiddle_threshold){
+    ApplyTwiddle(twiddle_tolerance);
+  }
 }
+
+
 
 double PID::TotalError() {
-  return -p_error * Kp - i_error * Ki - d_error * Kd;
+  double total_error = -p_error * Kp - i_error * Ki - d_error * Kd;
+  
+  total_error = Sigmoid(total_error);
+  return total_error;
 }
 
-void PID::ApplyTwiddle(double tolerance){
-  if(iteration_counter < twiddle_threshold){
-    return;
-  }
 
-  double best_err = PID::TotalError();
+
+
+void PID::ApplyTwiddle(double tolerance){
+  
+  std::vector<double> parameters = {Kp, Ki, Kd};
+  std::vector<double> dp = {1.0, 1.0, 1.0};
+
+  double best_err = TotalError();
 
   while(std::accumulate(dp.begin(), dp.end(), 0) > tolerance){
+    PID twiddle;
+
     for(int i = 0; i < dp.size(); i++){
-      switch(i){
-        case 0:
-          Kp += dp[i];
-          break;
-        case 1:        
-          Ki += dp[i];
-          break;
-        case 2:
-          Kd += dp[i];
-          break;
+      parameters[i] += dp[i];
       }
       
       double err = PID::TotalError();
