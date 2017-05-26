@@ -4,7 +4,6 @@
 #include <chrono>
 #include <vector>
 #include <numeric>
-#include "helper.h"
 
 class PID {
   std::chrono::steady_clock::time_point t_last_meas;
@@ -36,16 +35,6 @@ public:
   double d_error;
   
   /*
-  * Number of epochs after which twiddle optimization should be applied
-  */
-  int twiddle_threshold;
-
-  /*
-  * Twiddle tolerance value for accumulated dp-values
-  */
-  double twiddle_tolerance;
-
-  /*
   * Iteration counter
   */
   int iteration_counter;
@@ -53,7 +42,7 @@ public:
   /*
   * Initializing PID
   */
-  void Init(double Kp = 0.0, double Ki = 0.0, double Kd = 0.0, int twiddle_threshold = 100, double twiddle_tolerance = 0.0001);
+  void Init(double Kp = 0.0, double Ki = 0.0, double Kd = 0.0);
 
   /*
   * Update the PID error variables given cross track error.
@@ -65,18 +54,8 @@ public:
   */
   double TotalError();
 
-  /*
-  * Apply twiddle to find optimal parameters
-  */
-  void ApplyTwiddle(double cte, double tolerance);
 
   double Sigmoid(double input, double low, double high);
-
-  /*
-  * Vector for changing factors for P, I and D
-  */
-  std::vector<double> dp {1.0,1.0,1.0};
-
 };
 
 #endif /* PID_H */
