@@ -3,6 +3,23 @@ Self-Driving Car Engineer Nanodegree Program
 
 ---
 
+## Reflections
+
+In my implementation I used two PID-Controllers to control steering input and throttle input to the Udacity simulator.
+
+I chose the final hyperparameters via manual tuning. My final hyperparameters were:
+* Steering input:
+  * P: 0.15
+  * I: 0.01
+  * D: 3.0
+* Throttle input:
+  * P: 3.0
+  * I: 0.0002
+  * D: 2.0
+
+For the steering input I chose a small P-value to minimize overshooting. I set the P-value of the throttle controler comparatively high as exspecially in the beginning, when the car's velocity deviates significantly from the desired velocity, a strong reaction is required. Additionally, overshooting in throttle does not have as much of an effect as in steering.
+ 
+
 ## Dependencies
 
 * cmake >= 3.5
