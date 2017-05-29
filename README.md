@@ -17,7 +17,11 @@ I chose the final hyperparameters via manual tuning. My final hyperparameters we
   * I: 0.0002
   * D: 2.0
 
-For the steering input I chose a small P-value to minimize overshooting. I set the P-value of the throttle controler comparatively high as exspecially in the beginning, when the car's velocity deviates significantly from the desired velocity, a strong reaction is required. Additionally, overshooting in throttle does not have as much of an effect as in steering.
+For the steering input I chose a small P-value to minimize oscillation. I set the P-value of the throttle controler comparatively high. Exspecially in the beginning, when the car's velocity deviates significantly from the desired velocity, a strong reaction is required. Additionally, overshooting in throttle does not have as much of an effect as in steering.
+
+For the same reasons I chose a high D-value for steering input in order to minimize overshooting. For throttle, oscillation is not that critical. Therefore I chose a lower D-value which in particular seems low when taking the gap in P-values into account.
+
+I chose small I-values for both steering and throttle as the input data from the simulator seems quite accurate. So there is not much of a constant error to correct with I-values. I chose the throttle input to be particularily low, as a high value would result in a too high velocity after the acceleration period. The acceleration period adds a bias via the I-value which results in too high velocity after having reached the target velocity.
  
 
 ## Dependencies
