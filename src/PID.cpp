@@ -43,8 +43,6 @@ void PID::UpdateError(double cte) {
 double PID::TotalError() {
   double total_error = -p_error * Kp - i_error * Ki - d_error * Kd;
 
-  total_error = Sigmoid(total_error,-1.0,1.0);  
-
   return total_error;
 }
 
