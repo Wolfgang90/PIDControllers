@@ -6,15 +6,18 @@
 #include <numeric>
 
 class PID {
-  std::chrono::steady_clock::time_point t_last_meas;
 
 public:
+
   /*
-  * Errors
+  * Constructor
   */
-  double p_error;
-  double i_error;
-  double d_error;
+  PID();
+
+  /*
+  * Destructor.
+  */
+  virtual ~PID();
 
   /*
   * Coefficients
@@ -24,14 +27,21 @@ public:
   double Kd;
 
   /*
-  * Constructor
+  * Errors
   */
-  PID(double Kp = 0.0, double Ki = 0.0, double Kd = 0.0, int twiddle_threshold = 100);
+  double p_error;
+  double i_error;
+  double d_error;
+  
+  /*
+  * Iteration counter
+  */
+  int iteration_counter;
 
   /*
-  * Destructor.
+  * Initializing PID
   */
-  virtual ~PID();
+  void Init(double Kp = 0.0, double Ki = 0.0, double Kd = 0.0);
 
   /*
   * Update the PID error variables given cross track error.
@@ -43,28 +53,8 @@ public:
   */
   double TotalError();
 
-  /*
-  * Apply twiddle to find optimal parameters
-  */
-  void ApplyTwiddle(double tolerance);
 
-  /*
-  * Vector for changing factors for P, I and D
-  */
-  std::vector<double> dp {1.0,1.0,1.0};
-
-  /*
-  * Iteration counter
-  */
-  int iteration_counter = 0;
-  
-  /*
-  * Minimum number of iterations before to apply twiddle
-  */
-
-  int twiddle_threshold;
-
-
+  double Sigmoid(double input, double low, double high);
 };
 
 #endif /* PID_H */
