@@ -6,7 +6,6 @@
 #include <numeric>
 
 class PID {
-  std::chrono::steady_clock::time_point t_last_meas;
 
 public:
 

@@ -26,22 +26,14 @@ void PID::Init(double Kp, double Ki, double Kd){
 
 
   iteration_counter = 0;
-
-  t_last_meas = std::chrono::steady_clock::now();
 }
 
 void PID::UpdateError(double cte) {
   
-  // Calculate interval since last measurement
-  auto t_curr = std::chrono::steady_clock::now();
-  std::chrono::duration<double> interval = t_curr - t_last_meas;
-  double dt_interval = interval.count();
-  t_last_meas = t_curr;
-
   // Update errors
-  d_error = (cte - p_error) / dt_interval;
+  d_error = cte - p_error;
   p_error = cte;
-  i_error += cte * dt_interval; 
+  i_error += cte; 
 
   iteration_counter += 1;
 }
